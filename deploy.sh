@@ -31,16 +31,22 @@ echo "Do you want to set up an email service? (yes/no)"
 read SETUP_EMAIL_SERVICE
 
 # Create app
+echo "Creating app..."
 dokku apps:create $APP_NAME
+echo "App created successfully!"
 
 # Setup proxy ports
+echo "Setting up proxy ports..."
 dokku proxy:ports-add $APP_NAME http:80:8055
 dokku proxy:ports-remove $APP_NAME http:80:5000
+echo "Proxy ports set up successfully!"
 
 # Setup storage
+echo "Mounting a volume for uploads..."
 mkdir -p /var/lib/dokku/data/storage/$APP_NAME-uploads
 chown -R dokku:dokku /var/lib/dokku/data/storage/$APP_NAME-uploads
 dokku storage:mount $APP_NAME /var/lib/dokku/data/storage/$APP_NAME-uploads:/directus/uploads
+echo "Volume mounted successfully!"
 
 # Setup Postgres if user chose to
 if [ "$USE_POSTGRES" = "yes" ]; then
@@ -127,3 +133,5 @@ dokku docker-options:add $APP_NAME deploy "\
 
 # Deploy the app
 dokku git:from-image $APP_NAME directus/directus
+
+echo "App deployed successfully!"
