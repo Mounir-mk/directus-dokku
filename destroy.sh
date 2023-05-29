@@ -18,9 +18,9 @@ read APP_NAME
 
 # Delete app
 
-dokku apps:destroy $APP_NAME
-dokku postgres:destroy $APP_NAME-db
-dokku redis:destroy $APP_NAME-cache
+dokku --force apps:destroy $APP_NAME
+dokku postgres:destroy $APP_NAME-db --force
+dokku redis:destroy $APP_NAME-cache --force
 
 rm -rf /var/lib/dokku/data/storage/$APP_NAME-uploads
 
