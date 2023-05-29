@@ -30,6 +30,16 @@ read USE_REDIS
 echo "Do you want to set up an email service? (yes/no)"
 read SETUP_EMAIL_SERVICE
 
+echo "Do you want to set a public URL for the app (e.g. directus.example.com)?"
+echo "It will be used for the email service (e.g forgot password emails.) (yes/no)"
+read SET_PUBLIC_URL
+
+if [ "$SET_PUBLIC_URL" = "yes" ]; then
+    echo "Enter the public URL:"
+    read PUBLIC_URL
+fi
+
+
 # Create app
 echo "Creating app..."
 dokku apps:create $APP_NAME
@@ -47,6 +57,12 @@ mkdir -p /var/lib/dokku/data/storage/$APP_NAME-uploads
 chown -R dokku:dokku /var/lib/dokku/data/storage/$APP_NAME-uploads
 dokku storage:mount $APP_NAME /var/lib/dokku/data/storage/$APP_NAME-uploads:/directus/uploads
 echo "Volume mounted successfully!"
+
+if [ "$SET_PUBLIC_URL" = "yes" ]; then
+    # Set the public URL
+    dokku config:set --no-restart $APP_NAME \
+        PUBLIC_URL=$PUBLIC_URL
+fi
 
 # Setup Postgres if user chose to
 if [ "$USE_POSTGRES" = "yes" ]; then
